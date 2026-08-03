@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: support_ai
+      POSTGRES_PASSWORD: support_ai_pw
+      POSTGRES_DB: support_ai
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U support_ai"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # Switch to Postgres by uncommenting the next line and removing the
+      # sqlite default -- both work, sqlite needs zero setup for local dev.
+      # DATABASE_URL: postgresql+psycopg2://support_ai:support_ai_pw@postgres:5432/support_ai
+      LLM_PROVIDER: ${LLM_PROVIDER:-mock}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dev-secret-change-me-in-production}
+    volumes:
+      - ./backend:/app
+      - chroma_data:/app/chroma_data
+      - uploaded_files:/app/uploaded_files
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  pg_data:
+  chroma_data:
+  uploaded_files:
