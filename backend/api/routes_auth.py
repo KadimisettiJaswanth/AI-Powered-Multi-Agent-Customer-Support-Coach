@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from database.db import get_db
 from database.models import User, RoleEnum
-from schemas.schemas import UserRegister, UserLogin, Token, UserOut
+from schemas.schemas import UserRegister, UserLogin, Token, UserOut, UserUpdateMe
 from auth.auth import hash_password, verify_password, create_access_token
 from auth.dependencies import get_current_user, require_roles
 from utils.rate_limit import rate_limit
@@ -62,6 +62,36 @@ def login(payload: UserLogin, db: Session = Depends(get_db)):
 
 @router.get("/me", response_model=UserOut)
 def me(current_user: User = Depends(get_current_user)):
+    return current_user
+
+
+@router.put("/me", response_model=UserOut)
+def update_me(
+    payload: UserUpdateMe,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    changes = []
+    if payload.email and payload.email != current_user.email:
+        existing = db.query(User).filter(User.email == payload.email).first()
+        if existing:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        current_user.email = payload.email
+        changes.append("email")
+    
+    if payload.full_name and payload.full_name != current_user.full_name:
+        current_user.full_name = payload.full_name
+        changes.append("full_name")
+        
+    if payload.password:
+        current_user.hashed_password = hash_password(payload.password)
+        changes.append("password")
+        
+    if changes:
+        log_action(db, current_user.id, "user_self_updated", f"Updated: {', '.join(changes)}")
+        db.commit()
+        db.refresh(current_user)
+        
     return current_user
 
 

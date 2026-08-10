@@ -5,12 +5,13 @@ import StatCard from "../components/StatCard";
 import { analyticsApi } from "../api/endpoints";
 
 const SENTIMENT_COLORS = {
-  positive: "#0F8B8D",
-  neutral: "#9AA5B1",
-  negative: "#E8A33D",
-  angry: "#C1554D",
-  urgent: "#9A3E37",
-  unknown: "#D8DEE8",
+  positive: "#0F8B8D",  // Teal
+  neutral: "#13293D",   // Navy
+  negative: "#E8A33D",  // Amber
+  frustrated: "#E8A33D",// Amber
+  angry: "#C1554D",     // Rose
+  urgent: "#9A3E37",    // Dark Rose
+  unknown: "#1A1C20",   // Ink
 };
 
 export default function AnalyticsPage() {
@@ -84,7 +85,7 @@ export default function AnalyticsPage() {
                 <PieChart>
                   <Pie data={sentimentData} dataKey="value" nameKey="name" innerRadius={55} outerRadius={90} paddingAngle={2}>
                     {sentimentData.map((entry, i) => (
-                      <Cell key={i} fill={SENTIMENT_COLORS[entry.name] || "#D8DEE8"} />
+                      <Cell key={i} fill={SENTIMENT_COLORS[entry.name.toLowerCase()] || SENTIMENT_COLORS.unknown} />
                     ))}
                   </Pie>
                   <Tooltip />

@@ -4,6 +4,7 @@ export const authApi = {
   login: (email, password) => apiClient.post("/login", { email, password }),
   register: (payload) => apiClient.post("/register", payload),
   me: () => apiClient.get("/me"),
+  updateMe: (payload) => apiClient.put("/me", payload),
   listUsers: () => apiClient.get("/users"),
   updateUser: (id, params) => apiClient.put(`/users/${id}`, null, { params }),
 };

@@ -33,6 +33,12 @@ class UserOut(BaseModel):
         from_attributes = True
 
 
+class UserUpdateMe(BaseModel):
+    full_name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    password: Optional[str] = Field(None, min_length=8)
+
+
 # --- Chat / RAG ---
 class ChatRequest(BaseModel):
     question: str

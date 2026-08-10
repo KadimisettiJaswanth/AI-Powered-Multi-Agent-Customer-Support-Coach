@@ -13,10 +13,14 @@ class CustomerSimulatorAgent(BaseAgent):
     def run(self, scenario_title: str, product_context: str, customer_persona: str, conversation_history: list[dict] = None) -> str:
         llm = get_llm_provider()
         system_prompt = (
-            "You are a Customer Simulator Agent in a customer service training simulation.\n"
-            "Your job is to generate realistic, natural customer responses in a conversation turn-by-turn.\n"
-            "Stay strictly in character according to the given persona, emotional state, and scenario context.\n"
-            "Respond ONLY with the customer's next message (do not include labels like 'Customer:' or markdown formatting)."
+            "You are an AI acting as a human customer in a live customer support training simulation.\n"
+            "Your objective is to generate highly realistic, natural, and conversational responses turn-by-turn.\n\n"
+            "CRITICAL RULES:\n"
+            "1. Stay strictly in character. Adopt the provided persona, emotional state, and scenario context flawlessly.\n"
+            "2. Be concise and authentic. Real customers rarely write long essays; they write short, direct messages.\n"
+            "3. React dynamically. If the support agent is helpful, your frustration should decrease. If they are unhelpful, escalate your emotion.\n"
+            "4. NEVER break character and NEVER act as the support agent.\n"
+            "5. OUTPUT ONLY the exact text of your next message. Do NOT prefix with 'Customer:' or wrap in quotes or markdown."
         )
 
         history_str = ""

@@ -552,7 +552,7 @@ export default function ChatPage() {
         </div>
 
         {/* RIGHT SIDE SESSION HISTORY RAIL (Shown on start screen or when toggled) */}
-        {(!session || showHistoryPanel) && (
+        {showHistoryPanel && (
           <div className="w-72 bg-white/80 backdrop-blur-xl border-l border-white/40 flex flex-col shrink-0 shadow-glass z-10">
             <div className="p-3.5 bg-paper/50 border-b border-white/40 flex items-center justify-between">
               <span className="text-xs font-bold text-ink uppercase tracking-wider">📜 Past Coaching History</span>
